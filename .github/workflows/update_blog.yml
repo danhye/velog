@@ -37,6 +37,9 @@ jobs:
         git add .
         git diff --quiet && echo "No changes to commit" || git commit -m "✨ Auto-update blog posts"
 
+    - name: Pull before pushing
+      run: git pull --rebase origin main
+
     - name: Push changes (force-with-lease)
       env:
         TOKEN: ${{ secrets.GH_PAT }}
