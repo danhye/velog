@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        persist-credentials: false  # 인증정보 제거
 
     - name: Set up Git
       run: |
@@ -37,11 +39,15 @@ jobs:
         git add .
         git diff --quiet && echo "No changes to commit" || git commit -m "✨ Auto-update blog posts"
 
+    - name: Authenticate with PAT
+      env:
+        TOKEN: ${{ secrets.GH_PAT }}
+      run: |
+        git remote set-url origin https://x-access-token:${TOKEN}@github.com/danhye/velog.git
+
     - name: Pull before pushing
       run: git pull --rebase origin main
 
     - name: Push changes (force-with-lease)
-      env:
-        TOKEN: ${{ secrets.GH_PAT }}
       run: |
-        git push https://x-access-token:${TOKEN}@github.com/danhye/velog.git main --force-with-lease
+        git push origin main --force-with-lease
